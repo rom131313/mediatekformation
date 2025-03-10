@@ -58,9 +58,11 @@ class PlaylistsController extends AbstractController {
     }
 
     #[Route('/playlists/tri/{champ}/{ordre}', name: 'playlists.sort')]
-    public function sort($champ, $ordre): Response{
+    public function sort($champ, $ordre): Response {
         if ($champ === "name") {
             $playlists = $this->playlistRepository->findAllOrderByName($ordre);
+        } elseif ($champ === "formations") {
+            $playlists = $this->playlistRepository->findAllOrderByFormationCount($ordre);
         } else {
             throw new \InvalidArgumentException("Champ de tri invalide : " . $champ);
         }
