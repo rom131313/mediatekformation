@@ -51,6 +51,15 @@ class PlaylistRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    public function findAllOrderBy($champ, $ordre)
+    {
+        return $this->createQueryBuilder('p')
+            ->orderBy('p.' . $champ, $ordre)
+            ->getQuery()
+            ->getResult();
+    }
+
+
 
     /**
      * Enregistrements dont un champ contient une valeur

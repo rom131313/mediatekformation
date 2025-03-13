@@ -1,0 +1,25 @@
+{% extends "baseback.html.twig" %}
+
+{% block admin_content %}
+    <h3>{% if playlist.id is defined %}Modifier{% else %}Ajouter{% endif %} une Playlist</h3>
+
+    {{ form_start(form) }}
+    <div class="form-group">
+        {{ form_label(form.name, "Nom de la Playlist") }}
+        {{ form_widget(form.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.name) }}
+    </div>
+
+    <div class="form-group">
+        {{ form_label(form.description, "Description") }}
+        {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(form.description) }}
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        {% if playlist.id is defined %}Modifier{% else %}Ajouter{% endif %}
+    </button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_playlists_index') }}" class="btn btn-secondary mt-3">Retour</a>
+{% endblock %}
