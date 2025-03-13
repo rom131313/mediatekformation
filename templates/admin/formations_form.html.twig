@@ -1,0 +1,12 @@
+{% extends "baseback.html.twig" %}
+
+{% block admin_content %}
+    <h3>{% if form.vars.value.id %}Modifier{% else %}Ajouter{% endif %} une Formation</h3>
+
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    <button type="submit" class="btn btn-success">Valider</button>
+    {{ form_end(form) }}
+
+    <a href="{{ path('admin_formations_index') }}" class="btn btn-secondary mt-3">Retour</a>
+{% endblock %}

@@ -1,6 +1,45 @@
 {% extends "baseback.html.twig" %}
 
 {% block admin_content %}
-    <h3>Gestion des formations</h3>
+    <h3>Gestion des Formations</h3>
     <p>Cette page affichera la liste des formations.</p>
+
+    <a href="{{ path('admin_formations_add') }}" class="btn btn-success mb-3">+ Ajouter une formation</a>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>Formation
+                <a href="{{ path('admin_formations_sort', {champ:'title', ordre:'ASC'}) }}" class="btn btn-info btn-sm">▲</a>
+                <a href="{{ path('admin_formations_sort', {champ:'title', ordre:'DESC'}) }}" class="btn btn-info btn-sm">▼</a>
+            </th>
+            <th>Playlist</th>
+            <th>Catégories</th>
+            <th>Date
+                <a href="{{ path('admin_formations_sort', {champ:'publishedAt', ordre:'ASC'}) }}" class="btn btn-info btn-sm">▲</a>
+                <a href="{{ path('admin_formations_sort', {champ:'publishedAt', ordre:'DESC'}) }}" class="btn btn-info btn-sm">▼</a>
+            </th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for formation in formations %}
+            <tr>
+                <td>{{ formation.title }}</td>
+                <td>{{ formation.playlist ? formation.playlist.name : 'Aucune' }}</td>
+                <td>
+                    {% for categorie in formation.categories %}
+                        {{ categorie.name }}{% if not loop.last %}, {% endif %}
+                    {% endfor %}
+                </td>
+                <td>{{ formation.publishedAt ? formation.publishedAt|date('d/m/Y') : 'Non définie' }}</td>
+                <td>
+                    <a href="{{ path('admin_formations_edit', {id: formation.id}) }}" class="btn btn-warning btn-sm">Modifier</a>
+                    <a href="{{ path('admin_formations_delete', {id: formation.id}) }}" class="btn btn-danger btn-sm"
+                       onclick="return confirm('Êtes-vous sûr de vouloir supprimer cette formation ?');">Supprimer</a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
