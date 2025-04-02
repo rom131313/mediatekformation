@@ -26,6 +26,9 @@ class AccueilController extends AbstractController{
         $this->repository = $repository;
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/', name: 'accueil')]
     public function index(): Response{
         $formations = $this->repository->findAllLasted(2);
@@ -34,6 +37,9 @@ class AccueilController extends AbstractController{
         ]);
     }
 
+    /**
+     * @return Response
+     */
     #[Route('/cgu', name: 'cgu')]
     public function cgu(): Response{
         return $this->render("pages/cgu.html.twig");
