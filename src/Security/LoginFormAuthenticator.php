@@ -16,16 +16,32 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\SecurityRequestAttributes;
 use Symfony\Component\Security\Http\Util\TargetPathTrait;
 
+/**
+ * Authenticator de formulaire de connexion.
+ *
+ * Gère l'authentification utilisateur via un formulaire sécurisé
+ * et redirige vers l'interface d'administration après succès.
+ */
 class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
 {
     use TargetPathTrait;
 
+    /**
+     *
+     */
     public const LOGIN_ROUTE = 'app_login';
 
+    /**
+     * @param UrlGeneratorInterface $urlGenerator
+     */
     public function __construct(private UrlGeneratorInterface $urlGenerator)
     {
     }
 
+    /**
+     * @param Request $request
+     * @return Passport
+     */
     public function authenticate(Request $request): Passport
     {
         $email = $request->getPayload()->getString('email');
@@ -42,6 +58,12 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         );
     }
 
+    /**
+     * @param Request $request
+     * @param TokenInterface $token
+     * @param string $firewallName
+     * @return Response|null
+     */
     public function onAuthenticationSuccess(Request $request, TokenInterface $token, string $firewallName): ?Response
     {
         if ($targetPath = $this->getTargetPath($request->getSession(), $firewallName)) {
@@ -54,6 +76,10 @@ class LoginFormAuthenticator extends AbstractLoginFormAuthenticator
         return new RedirectResponse($this->urlGenerator->generate('admin_formations_index')); // 🔹 Redirige vers la liste des formations
     }
 
+    /**
+     * @param Request $request
+     * @return string
+     */
     protected function getLoginUrl(Request $request): string
     {
         return $this->urlGenerator->generate(self::LOGIN_ROUTE);

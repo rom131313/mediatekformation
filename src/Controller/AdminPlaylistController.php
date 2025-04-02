@@ -11,16 +11,32 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Contrôleur d'administration des playlists.
+ * Permet de gérer l'ajout, la modification, la suppression et le tri des playlists.
+ */
 #[Route('/admin/playlists', name: 'admin_playlists_')]
 class AdminPlaylistController extends AbstractController
 {
+    /**
+     *  Repository des playlists.
+     * @var PlaylistRepository
+     */
     private PlaylistRepository $playlistRepository;
 
+    /**
+     *  Injection du repository des playlists.
+     * @param PlaylistRepository $playlistRepository
+     */
     public function __construct(PlaylistRepository $playlistRepository)
     {
         $this->playlistRepository = $playlistRepository;
     }
 
+    /**
+     *  Liste toutes les playlists.
+     * @return Response
+     */
     #[Route('/', name: 'index')]
     public function index(): Response
     {
@@ -30,6 +46,13 @@ class AdminPlaylistController extends AbstractController
         ]);
     }
 
+    /**
+     *  Trie les playlists par un champ et un ordre donnés.
+     * @param string $champ
+     * @param string $ordre
+     * @param PlaylistRepository $playlistRepository
+     * @return Response
+     */
     #[Route('/tri/{champ}/{ordre}', name: 'sort')]
     public function sort(string $champ, string $ordre, PlaylistRepository $playlistRepository): Response
     {
@@ -40,6 +63,12 @@ class AdminPlaylistController extends AbstractController
     }
 
 
+    /**
+     *  Ajoute une nouvelle playlist via formulaire.
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/ajout', name: 'add')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -59,6 +88,13 @@ class AdminPlaylistController extends AbstractController
         ]);
     }
 
+    /**
+     *  Modifie une playlist existante.
+     * @param Playlist $playlist
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/edit/{id}', name: 'edit')]
     public function edit(Playlist $playlist, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -76,6 +112,12 @@ class AdminPlaylistController extends AbstractController
         ]);
     }
 
+    /**
+     *  Supprime une playlist si elle ne contient aucune formation.
+     * @param Playlist $playlist
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/delete/{id}', name: 'delete')]
     public function delete(Playlist $playlist, EntityManagerInterface $entityManager): Response
     {

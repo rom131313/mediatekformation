@@ -1,0 +1,69 @@
+<html>
+<head>
+<title>SecurityController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #67a37c; font-style: italic;}
+.s5 { color: #6aab73;}
+.s6 { color: #9876aa;}
+.s7 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+SecurityController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Security</span><span class="s1">\</span><span class="s2">Http</span><span class="s1">\</span><span class="s2">Authentication</span><span class="s1">\</span><span class="s2">AuthenticationUtils;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Contrôleur de gestion de la sécurité (login et logout).</span>
+ <span class="s3">*/</span>
+<span class="s0">class </span><span class="s2">SecurityController </span><span class="s0">extends </span><span class="s2">AbstractController</span>
+<span class="s2">{</span>
+    <span class="s3">/**</span>
+     <span class="s3">*  Déconnecte l'utilisateur.</span>
+     <span class="s3">*  Cette méthode est interceptée automatiquement par Symfony.</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">void</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(path: </span><span class="s5">'/logout'</span><span class="s2">, name: </span><span class="s5">'app_logout'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">logout(): void</span>
+    <span class="s2">{</span>
+        <span class="s0">throw new </span><span class="s1">\</span><span class="s2">LogicException(</span><span class="s5">'This method can be blank - it will be intercepted by the logout key on your firewall.'</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Gère l'authentification (formulaire de login).</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">AuthenticationUtils $authenticationUtils</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(path: </span><span class="s5">'/login'</span><span class="s2">, name: </span><span class="s5">'app_login'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">login(AuthenticationUtils </span><span class="s6">$authenticationUtils</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s7">// if ($this-&gt;getUser()) {</span>
+        <span class="s7">//     return $this-&gt;redirectToRoute('target_path');</span>
+        <span class="s7">// }</span>
+
+        <span class="s7">// get the login error if there is one</span>
+        <span class="s6">$error </span><span class="s2">= </span><span class="s6">$authenticationUtils</span><span class="s2">-&gt;getLastAuthenticationError();</span>
+        <span class="s7">// last username entered by the user</span>
+        <span class="s6">$lastUsername </span><span class="s2">= </span><span class="s6">$authenticationUtils</span><span class="s2">-&gt;getLastUsername();</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s5">'security/login.html.twig'</span><span class="s2">, [</span><span class="s5">'last_username' </span><span class="s2">=&gt; </span><span class="s6">$lastUsername</span><span class="s2">, </span><span class="s5">'error' </span><span class="s2">=&gt; </span><span class="s6">$error</span><span class="s2">]);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

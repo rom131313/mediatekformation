@@ -1,0 +1,159 @@
+<html>
+<head>
+<title>AdminFormationController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #6aab73;}
+.s5 { color: #67a37c; font-style: italic;}
+.s6 { color: #9876aa;}
+.s7 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AdminFormationController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Entity</span><span class="s1">\</span><span class="s2">Formation;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Form</span><span class="s1">\</span><span class="s2">FormationType;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">FormationRepository;</span>
+<span class="s0">use </span><span class="s2">Doctrine</span><span class="s1">\</span><span class="s2">ORM</span><span class="s1">\</span><span class="s2">EntityManagerInterface;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Request;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Contrôleur d'administration des formations.</span>
+ <span class="s3">* Permet de gérer l'ajout, la modification, la suppression et le tri des formations.</span>
+ <span class="s3">*/</span>
+<span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/admin/formations'</span><span class="s2">, name: </span><span class="s4">'admin_formations_'</span><span class="s2">)]</span>
+<span class="s0">class </span><span class="s2">AdminFormationController </span><span class="s0">extends </span><span class="s2">AbstractController</span>
+<span class="s2">{</span>
+    <span class="s3">/**</span>
+     <span class="s3">*  Repository des formations.</span>
+     <span class="s3">* </span><span class="s5">@var </span><span class="s3">FormationRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s2">FormationRepository </span><span class="s6">$formationRepository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Injection du repository de formations.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">FormationRepository $formationRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">public function </span><span class="s2">__construct(FormationRepository </span><span class="s6">$formationRepository</span><span class="s2">)</span>
+    <span class="s2">{</span>
+        <span class="s6">$this</span><span class="s2">-&gt;formationRepository = </span><span class="s6">$formationRepository</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Liste toutes les formations.</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/'</span><span class="s2">, name: </span><span class="s4">'index'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">index(): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$formations </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/formations.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'formations' </span><span class="s2">=&gt; </span><span class="s6">$formations</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Trie les formations selon un champ et un ordre.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">$champ</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">$ordre</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/tri/{champ}/{ordre}'</span><span class="s2">, name: </span><span class="s4">'sort'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">sort(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$ordre</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$formations </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;findAllOrderBy(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$ordre</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/formations.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'formations' </span><span class="s2">=&gt; </span><span class="s6">$formations</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Ajoute une nouvelle formation via formulaire.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/ajout'</span><span class="s2">, name: </span><span class="s4">'add'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">add(Request </span><span class="s6">$request</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$formation </span><span class="s2">= </span><span class="s0">new </span><span class="s2">Formation();</span>
+        <span class="s6">$form </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;createForm(FormationType::</span><span class="s0">class</span><span class="s2">, </span><span class="s6">$formation</span><span class="s2">);</span>
+        <span class="s6">$form</span><span class="s2">-&gt;handleRequest(</span><span class="s6">$request</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$form</span><span class="s2">-&gt;isSubmitted() &amp;&amp; </span><span class="s6">$form</span><span class="s2">-&gt;isValid()) {</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;persist(</span><span class="s6">$formation</span><span class="s2">);</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_formations_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/formations_form.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'form' </span><span class="s2">=&gt; </span><span class="s6">$form</span><span class="s2">-&gt;createView(),</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Modifie une formation existante.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Formation $formation</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/edit/{id}'</span><span class="s2">, name: </span><span class="s4">'edit'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">edit(Formation </span><span class="s6">$formation</span><span class="s2">, Request </span><span class="s6">$request</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$form </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;createForm(FormationType::</span><span class="s0">class</span><span class="s2">, </span><span class="s6">$formation</span><span class="s2">);</span>
+        <span class="s6">$form</span><span class="s2">-&gt;handleRequest(</span><span class="s6">$request</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$form</span><span class="s2">-&gt;isSubmitted() &amp;&amp; </span><span class="s6">$form</span><span class="s2">-&gt;isValid()) {</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_formations_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/formations_form.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'form' </span><span class="s2">=&gt; </span><span class="s6">$form</span><span class="s2">-&gt;createView(),</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Supprime une formation.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Formation $formation</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/delete/{id}'</span><span class="s2">, name: </span><span class="s4">'delete'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">delete(Formation </span><span class="s6">$formation</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s7">// Vérifie si la formation est bien liée à une playlist avant de la supprimer</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$formation</span><span class="s2">-&gt;getPlaylist()) {</span>
+            <span class="s6">$formation</span><span class="s2">-&gt;setPlaylist(null);</span>
+        <span class="s2">}</span>
+
+        <span class="s6">$entityManager</span><span class="s2">-&gt;remove(</span><span class="s6">$formation</span><span class="s2">);</span>
+        <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_formations_index'</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+
+
+
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

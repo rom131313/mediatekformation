@@ -1,0 +1,163 @@
+<html>
+<head>
+<title>AdminPlaylistController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #6aab73;}
+.s5 { color: #67a37c; font-style: italic;}
+.s6 { color: #9876aa;}
+.s7 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AdminPlaylistController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Entity</span><span class="s1">\</span><span class="s2">Playlist;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Form</span><span class="s1">\</span><span class="s2">PlaylistType;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">PlaylistRepository;</span>
+<span class="s0">use </span><span class="s2">Doctrine</span><span class="s1">\</span><span class="s2">ORM</span><span class="s1">\</span><span class="s2">EntityManagerInterface;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Request;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Contrôleur d'administration des playlists.</span>
+ <span class="s3">* Permet de gérer l'ajout, la modification, la suppression et le tri des playlists.</span>
+ <span class="s3">*/</span>
+<span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/admin/playlists'</span><span class="s2">, name: </span><span class="s4">'admin_playlists_'</span><span class="s2">)]</span>
+<span class="s0">class </span><span class="s2">AdminPlaylistController </span><span class="s0">extends </span><span class="s2">AbstractController</span>
+<span class="s2">{</span>
+    <span class="s3">/**</span>
+     <span class="s3">*  Repository des playlists.</span>
+     <span class="s3">* </span><span class="s5">@var </span><span class="s3">PlaylistRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s2">PlaylistRepository </span><span class="s6">$playlistRepository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Injection du repository des playlists.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">PlaylistRepository $playlistRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">public function </span><span class="s2">__construct(PlaylistRepository </span><span class="s6">$playlistRepository</span><span class="s2">)</span>
+    <span class="s2">{</span>
+        <span class="s6">$this</span><span class="s2">-&gt;playlistRepository = </span><span class="s6">$playlistRepository</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Liste toutes les playlists.</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/'</span><span class="s2">, name: </span><span class="s4">'index'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">index(): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$playlists </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;playlistRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/playlists.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'playlists' </span><span class="s2">=&gt; </span><span class="s6">$playlists</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Trie les playlists par un champ et un ordre donnés.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">string $champ</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">string $ordre</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">PlaylistRepository $playlistRepository</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/tri/{champ}/{ordre}'</span><span class="s2">, name: </span><span class="s4">'sort'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">sort(string </span><span class="s6">$champ</span><span class="s2">, string </span><span class="s6">$ordre</span><span class="s2">, PlaylistRepository </span><span class="s6">$playlistRepository</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$playlists </span><span class="s2">= </span><span class="s6">$playlistRepository</span><span class="s2">-&gt;findAllOrderBy(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$ordre</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/playlists.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'playlists' </span><span class="s2">=&gt; </span><span class="s6">$playlists</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Ajoute une nouvelle playlist via formulaire.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/ajout'</span><span class="s2">, name: </span><span class="s4">'add'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">add(Request </span><span class="s6">$request</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$playlist </span><span class="s2">= </span><span class="s0">new </span><span class="s2">Playlist();</span>
+        <span class="s6">$form </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;createForm(PlaylistType::</span><span class="s0">class</span><span class="s2">, </span><span class="s6">$playlist</span><span class="s2">);</span>
+        <span class="s6">$form</span><span class="s2">-&gt;handleRequest(</span><span class="s6">$request</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$form</span><span class="s2">-&gt;isSubmitted() &amp;&amp; </span><span class="s6">$form</span><span class="s2">-&gt;isValid()) {</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;persist(</span><span class="s6">$playlist</span><span class="s2">);</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_playlists_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/playlists_form.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'form' </span><span class="s2">=&gt; </span><span class="s6">$form</span><span class="s2">-&gt;createView(),</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Modifie une playlist existante.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Playlist $playlist</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/edit/{id}'</span><span class="s2">, name: </span><span class="s4">'edit'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">edit(Playlist </span><span class="s6">$playlist</span><span class="s2">, Request </span><span class="s6">$request</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$form </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;createForm(PlaylistType::</span><span class="s0">class</span><span class="s2">, </span><span class="s6">$playlist</span><span class="s2">);</span>
+        <span class="s6">$form</span><span class="s2">-&gt;handleRequest(</span><span class="s6">$request</span><span class="s2">);</span>
+
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$form</span><span class="s2">-&gt;isSubmitted() &amp;&amp; </span><span class="s6">$form</span><span class="s2">-&gt;isValid()) {</span>
+            <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_playlists_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/playlists_form.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'form' </span><span class="s2">=&gt; </span><span class="s6">$form</span><span class="s2">-&gt;createView(),</span>
+            <span class="s4">'playlist' </span><span class="s2">=&gt; </span><span class="s6">$playlist</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Supprime une playlist si elle ne contient aucune formation.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Playlist $playlist</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/delete/{id}'</span><span class="s2">, name: </span><span class="s4">'delete'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">delete(Playlist </span><span class="s6">$playlist</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s7">// Vérifie si la playlist contient encore des formations</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s6">$playlist</span><span class="s2">-&gt;getFormations()-&gt;isEmpty()) {</span>
+            <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'error'</span><span class="s2">, </span><span class="s4">'Impossible de supprimer une playlist contenant des formations.'</span><span class="s2">);</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_playlists_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s6">$entityManager</span><span class="s2">-&gt;remove(</span><span class="s6">$playlist</span><span class="s2">);</span>
+        <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+        <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'success'</span><span class="s2">, </span><span class="s4">'Playlist supprimée avec succès.'</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_playlists_index'</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+
+
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

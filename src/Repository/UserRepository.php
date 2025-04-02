@@ -10,10 +10,16 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
 
 /**
+ *  Repository des entités User.
+ *
+ *  Gère les requêtes spécifiques et la mise à jour sécurisée des mots de passe.
  * @extends ServiceEntityRepository<User>
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
+    /**
+     * @param ManagerRegistry $registry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);

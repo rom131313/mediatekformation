@@ -10,16 +10,32 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Contrôleur d'administration des formations.
+ * Permet de gérer l'ajout, la modification, la suppression et le tri des formations.
+ */
 #[Route('/admin/formations', name: 'admin_formations_')]
 class AdminFormationController extends AbstractController
 {
+    /**
+     *  Repository des formations.
+     * @var FormationRepository
+     */
     private FormationRepository $formationRepository;
 
+    /**
+     *  Injection du repository de formations.
+     * @param FormationRepository $formationRepository
+     */
     public function __construct(FormationRepository $formationRepository)
     {
         $this->formationRepository = $formationRepository;
     }
 
+    /**
+     *  Liste toutes les formations.
+     * @return Response
+     */
     #[Route('/', name: 'index')]
     public function index(): Response
     {
@@ -29,6 +45,12 @@ class AdminFormationController extends AbstractController
         ]);
     }
 
+    /**
+     *  Trie les formations selon un champ et un ordre.
+     * @param $champ
+     * @param $ordre
+     * @return Response
+     */
     #[Route('/tri/{champ}/{ordre}', name: 'sort')]
     public function sort($champ, $ordre): Response
     {
@@ -38,6 +60,12 @@ class AdminFormationController extends AbstractController
         ]);
     }
 
+    /**
+     *  Ajoute une nouvelle formation via formulaire.
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/ajout', name: 'add')]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -57,6 +85,13 @@ class AdminFormationController extends AbstractController
         ]);
     }
 
+    /**
+     *  Modifie une formation existante.
+     * @param Formation $formation
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/edit/{id}', name: 'edit')]
     public function edit(Formation $formation, Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -73,6 +108,12 @@ class AdminFormationController extends AbstractController
         ]);
     }
 
+    /**
+     *  Supprime une formation.
+     * @param Formation $formation
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/delete/{id}', name: 'delete')]
     public function delete(Formation $formation, EntityManagerInterface $entityManager): Response
     {

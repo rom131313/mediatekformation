@@ -1,0 +1,127 @@
+<html>
+<head>
+<title>AdminCategorieController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #6aab73;}
+.s5 { color: #67a37c; font-style: italic;}
+.s6 { color: #9876aa;}
+.s7 { color: #7a7e85;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AdminCategorieController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Entity</span><span class="s1">\</span><span class="s2">Categorie;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">CategorieRepository;</span>
+<span class="s0">use </span><span class="s2">Doctrine</span><span class="s1">\</span><span class="s2">ORM</span><span class="s1">\</span><span class="s2">EntityManagerInterface;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Request;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Contrôleur d'administration des catégories.</span>
+ <span class="s3">*</span>
+ <span class="s3">* Permet la gestion (CRUD) des catégories depuis le back-office.</span>
+ <span class="s3">*/</span>
+<span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/admin/categories'</span><span class="s2">, name: </span><span class="s4">'admin_categories_'</span><span class="s2">)]</span>
+<span class="s0">class </span><span class="s2">AdminCategorieController </span><span class="s0">extends </span><span class="s2">AbstractController</span>
+<span class="s2">{</span>
+    <span class="s3">/**</span>
+     <span class="s3">*  Injection du repository.</span>
+     <span class="s3">* </span><span class="s5">@var </span><span class="s3">CategorieRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s2">CategorieRepository </span><span class="s6">$categorieRepository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Injection du repository.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">CategorieRepository $categorieRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">public function </span><span class="s2">__construct(CategorieRepository </span><span class="s6">$categorieRepository</span><span class="s2">)</span>
+    <span class="s2">{</span>
+        <span class="s6">$this</span><span class="s2">-&gt;categorieRepository = </span><span class="s6">$categorieRepository</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Affiche la liste de toutes les catégories.</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/'</span><span class="s2">, name: </span><span class="s4">'index'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">index(): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$categories </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;categorieRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s4">'admin/categories.html.twig'</span><span class="s2">, [</span>
+            <span class="s4">'categories' </span><span class="s2">=&gt; </span><span class="s6">$categories</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Permet d'ajouter une nouvelle catégorie.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/add'</span><span class="s2">, name: </span><span class="s4">'add'</span><span class="s2">, methods: [</span><span class="s4">'POST'</span><span class="s2">])]</span>
+    <span class="s0">public function </span><span class="s2">add(Request </span><span class="s6">$request</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s6">$name </span><span class="s2">= </span><span class="s6">$request</span><span class="s2">-&gt;request-&gt;get(</span><span class="s4">'name'</span><span class="s2">);</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s6">$name</span><span class="s2">) {</span>
+            <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'error'</span><span class="s2">, </span><span class="s4">'Le nom de la catégorie est requis.'</span><span class="s2">);</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_categories_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s7">// Vérifier si la catégorie existe déjà</span>
+        <span class="s6">$existingCategory </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;categorieRepository-&gt;findOneBy([</span><span class="s4">'name' </span><span class="s2">=&gt; </span><span class="s6">$name</span><span class="s2">]);</span>
+        <span class="s0">if </span><span class="s2">(</span><span class="s6">$existingCategory</span><span class="s2">) {</span>
+            <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'error'</span><span class="s2">, </span><span class="s4">'Cette catégorie existe déjà.'</span><span class="s2">);</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_categories_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s6">$categorie </span><span class="s2">= </span><span class="s0">new </span><span class="s2">Categorie();</span>
+        <span class="s6">$categorie</span><span class="s2">-&gt;setName(</span><span class="s6">$name</span><span class="s2">);</span>
+        <span class="s6">$entityManager</span><span class="s2">-&gt;persist(</span><span class="s6">$categorie</span><span class="s2">);</span>
+        <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+        <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'success'</span><span class="s2">, </span><span class="s4">'Catégorie ajoutée avec succès.'</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_categories_index'</span><span class="s2">);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Supprime une catégorie si elle n'est pas liée à une formation.</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">Categorie $categorie</span>
+     <span class="s3">* </span><span class="s5">@param </span><span class="s3">EntityManagerInterface $entityManager</span>
+     <span class="s3">* </span><span class="s5">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s4">'/delete/{id}'</span><span class="s2">, name: </span><span class="s4">'delete'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">delete(Categorie </span><span class="s6">$categorie</span><span class="s2">, EntityManagerInterface </span><span class="s6">$entityManager</span><span class="s2">): Response</span>
+    <span class="s2">{</span>
+        <span class="s0">if </span><span class="s2">(!</span><span class="s6">$categorie</span><span class="s2">) {</span>
+            <span class="s0">throw </span><span class="s6">$this</span><span class="s2">-&gt;createNotFoundException(</span><span class="s4">'Catégorie non trouvée.'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s0">if </span><span class="s2">(!</span><span class="s6">$categorie</span><span class="s2">-&gt;getFormations()-&gt;isEmpty()) {</span>
+            <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'error'</span><span class="s2">, </span><span class="s4">'Impossible de supprimer une catégorie liée à une formation.'</span><span class="s2">);</span>
+            <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_categories_index'</span><span class="s2">);</span>
+        <span class="s2">}</span>
+
+        <span class="s6">$entityManager</span><span class="s2">-&gt;remove(</span><span class="s6">$categorie</span><span class="s2">);</span>
+        <span class="s6">$entityManager</span><span class="s2">-&gt;flush();</span>
+
+        <span class="s6">$this</span><span class="s2">-&gt;addFlash(</span><span class="s4">'success'</span><span class="s2">, </span><span class="s4">'Catégorie supprimée avec succès.'</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;redirectToRoute(</span><span class="s4">'admin_categories_index'</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

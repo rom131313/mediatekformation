@@ -14,11 +14,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class AccueilController extends AbstractController{
 
     /**
+     * Repository des formations pour accéder aux données.
      * @var FormationRepository
      */
     private $repository;
 
     /**
+     * Injection du repository dans le contrôleur.
      *
      * @param FormationRepository $repository
      */
@@ -27,6 +29,8 @@ class AccueilController extends AbstractController{
     }
 
     /**
+     * Affiche la page d'accueil avec les deux dernières formations publiées.
+     *
      * @return Response
      */
     #[Route('/', name: 'accueil')]
@@ -38,6 +42,8 @@ class AccueilController extends AbstractController{
     }
 
     /**
+     * Affiche la page des Conditions Générales d'Utilisation (CGU).
+     *
      * @return Response
      */
     #[Route('/cgu', name: 'cgu')]

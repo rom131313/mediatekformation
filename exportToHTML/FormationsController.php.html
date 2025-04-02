@@ -1,0 +1,132 @@
+<html>
+<head>
+<title>FormationsController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #67a37c; font-style: italic;}
+.s5 { color: #6aab73;}
+.s6 { color: #9876aa;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+FormationsController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">CategorieRepository;</span>
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">FormationRepository;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Request;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Contrôleur de gestion des formations.</span>
+ <span class="s3">* * Permet d'afficher, trier, filtrer et consulter les formations.</span>
+ <span class="s3">* </span><span class="s4">@author </span><span class="s3">emds</span>
+ <span class="s3">*/</span>
+<span class="s0">class </span><span class="s2">FormationsController </span><span class="s0">extends </span><span class="s2">AbstractController {</span>
+    <span class="s3">/**</span>
+     <span class="s3">* Template utilisé pour l'affichage des formations.</span>
+     <span class="s3">*/</span>
+    <span class="s0">private const </span><span class="s2">TEMPLATE_FORMATIONS = </span><span class="s5">&quot;pages/formations.html.twig&quot;</span><span class="s2">;</span>
+
+
+    <span class="s3">/**</span>
+     <span class="s3">*</span>
+     <span class="s3">* </span><span class="s4">@var </span><span class="s3">FormationRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s6">$formationRepository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*</span>
+     <span class="s3">* </span><span class="s4">@var </span><span class="s3">CategorieRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s6">$categorieRepository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Injection des repositories nécessaires.</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">FormationRepository $formationRepository</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">CategorieRepository $categorieRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">public function </span><span class="s2">__construct(FormationRepository </span><span class="s6">$formationRepository</span><span class="s2">, CategorieRepository </span><span class="s6">$categorieRepository</span><span class="s2">) {</span>
+        <span class="s6">$this</span><span class="s2">-&gt;formationRepository = </span><span class="s6">$formationRepository</span><span class="s2">;</span>
+        <span class="s6">$this</span><span class="s2">-&gt;categorieRepository= </span><span class="s6">$categorieRepository</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Affiche toutes les formations.</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s5">'/formations'</span><span class="s2">, name: </span><span class="s5">'formations'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">index(): Response{</span>
+        <span class="s6">$formations </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;findAll();</span>
+        <span class="s6">$categories </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;categorieRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(self::TEMPLATE_FORMATIONS, [</span>
+            <span class="s5">'formations' </span><span class="s2">=&gt; </span><span class="s6">$formations</span><span class="s2">,</span>
+            <span class="s5">'categories' </span><span class="s2">=&gt; </span><span class="s6">$categories</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Trie les formations selon un champ, un ordre et optionnellement une table.</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$champ</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$ordre</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$table</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s5">'/formations/tri/{champ}/{ordre}/{table}'</span><span class="s2">, name: </span><span class="s5">'formations.sort'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">sort(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$ordre</span><span class="s2">, </span><span class="s6">$table</span><span class="s2">=</span><span class="s5">&quot;&quot;</span><span class="s2">): Response{</span>
+        <span class="s6">$formations </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;findAllOrderBy(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$ordre</span><span class="s2">, </span><span class="s6">$table</span><span class="s2">);</span>
+        <span class="s6">$categories </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;categorieRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(self::TEMPLATE_FORMATIONS, [</span>
+            <span class="s5">'formations' </span><span class="s2">=&gt; </span><span class="s6">$formations</span><span class="s2">,</span>
+            <span class="s5">'categories' </span><span class="s2">=&gt; </span><span class="s6">$categories</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Recherche des formations par valeur dans un champ.</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$champ</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">Request $request</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$table</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s5">'/formations/recherche/{champ}/{table}'</span><span class="s2">, name: </span><span class="s5">'formations.findallcontain'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">findAllContain(</span><span class="s6">$champ</span><span class="s2">, Request </span><span class="s6">$request</span><span class="s2">, </span><span class="s6">$table</span><span class="s2">=</span><span class="s5">&quot;&quot;</span><span class="s2">): Response{</span>
+        <span class="s6">$valeur </span><span class="s2">= </span><span class="s6">$request</span><span class="s2">-&gt;get(</span><span class="s5">&quot;recherche&quot;</span><span class="s2">);</span>
+        <span class="s6">$formations </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;findByContainValue(</span><span class="s6">$champ</span><span class="s2">, </span><span class="s6">$valeur</span><span class="s2">, </span><span class="s6">$table</span><span class="s2">);</span>
+        <span class="s6">$categories </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;categorieRepository-&gt;findAll();</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(self::TEMPLATE_FORMATIONS, [</span>
+            <span class="s5">'formations' </span><span class="s2">=&gt; </span><span class="s6">$formations</span><span class="s2">,</span>
+            <span class="s5">'categories' </span><span class="s2">=&gt; </span><span class="s6">$categories</span><span class="s2">,</span>
+            <span class="s5">'valeur' </span><span class="s2">=&gt; </span><span class="s6">$valeur</span><span class="s2">,</span>
+            <span class="s5">'table' </span><span class="s2">=&gt; </span><span class="s6">$table</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">*  Affiche le détail d'une formation.</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">$id</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s5">'/formations/formation/{id}'</span><span class="s2">, name: </span><span class="s5">'formations.showone'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">showOne(</span><span class="s6">$id</span><span class="s2">): Response{</span>
+        <span class="s6">$formation </span><span class="s2">= </span><span class="s6">$this</span><span class="s2">-&gt;formationRepository-&gt;find(</span><span class="s6">$id</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s6">$this</span><span class="s2">-&gt;render(</span><span class="s5">&quot;pages/formation.html.twig&quot;</span><span class="s2">, [</span>
+            <span class="s5">'formation' </span><span class="s2">=&gt; </span><span class="s6">$formation</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

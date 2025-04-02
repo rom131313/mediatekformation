@@ -1,0 +1,77 @@
+<html>
+<head>
+<title>AccueilController.php</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style type="text/css">
+.s0 { color: #cf8e6d;}
+.s1 { color: #bcbec4;}
+.s2 { color: #bcbec4;}
+.s3 { color: #5f826b; font-style: italic;}
+.s4 { color: #67a37c; font-style: italic;}
+.s5 { color: #9876aa;}
+.s6 { color: #6aab73;}
+.s7 { color: #2aacb8;}
+</style>
+</head>
+<body bgcolor="#1e1f22">
+<table CELLSPACING=0 CELLPADDING=5 COLS=1 WIDTH="100%" BGCOLOR="#606060" >
+<tr><td><center>
+<font face="Arial, Helvetica" color="#000000">
+AccueilController.php</font>
+</center></td></tr></table>
+<pre><span class="s0">&lt;?php</span>
+<span class="s0">namespace </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Controller;</span>
+
+<span class="s0">use </span><span class="s2">App</span><span class="s1">\</span><span class="s2">Repository</span><span class="s1">\</span><span class="s2">FormationRepository;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Bundle</span><span class="s1">\</span><span class="s2">FrameworkBundle</span><span class="s1">\</span><span class="s2">Controller</span><span class="s1">\</span><span class="s2">AbstractController;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">HttpFoundation</span><span class="s1">\</span><span class="s2">Response;</span>
+<span class="s0">use </span><span class="s2">Symfony</span><span class="s1">\</span><span class="s2">Component</span><span class="s1">\</span><span class="s2">Routing</span><span class="s1">\</span><span class="s2">Annotation</span><span class="s1">\</span><span class="s2">Route;</span>
+
+<span class="s3">/**</span>
+ <span class="s3">* Description of AccueilController</span>
+ <span class="s3">*</span>
+ <span class="s3">* </span><span class="s4">@author </span><span class="s3">emds</span>
+ <span class="s3">*/</span>
+<span class="s0">class </span><span class="s2">AccueilController </span><span class="s0">extends </span><span class="s2">AbstractController{</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Repository des formations pour accéder aux données.</span>
+     <span class="s3">* </span><span class="s4">@var </span><span class="s3">FormationRepository</span>
+     <span class="s3">*/</span>
+    <span class="s0">private </span><span class="s5">$repository</span><span class="s2">;</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Injection du repository dans le contrôleur.</span>
+     <span class="s3">*</span>
+     <span class="s3">* </span><span class="s4">@param </span><span class="s3">FormationRepository $repository</span>
+     <span class="s3">*/</span>
+    <span class="s0">public function </span><span class="s2">__construct(FormationRepository </span><span class="s5">$repository</span><span class="s2">) {</span>
+        <span class="s5">$this</span><span class="s2">-&gt;repository = </span><span class="s5">$repository</span><span class="s2">;</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Affiche la page d'accueil avec les deux dernières formations publiées.</span>
+     <span class="s3">*</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s6">'/'</span><span class="s2">, name: </span><span class="s6">'accueil'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">index(): Response{</span>
+        <span class="s5">$formations </span><span class="s2">= </span><span class="s5">$this</span><span class="s2">-&gt;repository-&gt;findAllLasted(</span><span class="s7">2</span><span class="s2">);</span>
+        <span class="s0">return </span><span class="s5">$this</span><span class="s2">-&gt;render(</span><span class="s6">&quot;pages/accueil.html.twig&quot;</span><span class="s2">, [</span>
+            <span class="s6">'formations' </span><span class="s2">=&gt; </span><span class="s5">$formations</span>
+        <span class="s2">]);</span>
+    <span class="s2">}</span>
+
+    <span class="s3">/**</span>
+     <span class="s3">* Affiche la page des Conditions Générales d'Utilisation (CGU).</span>
+     <span class="s3">*</span>
+     <span class="s3">* </span><span class="s4">@return </span><span class="s3">Response</span>
+     <span class="s3">*/</span>
+    <span class="s1">#[</span><span class="s2">Route(</span><span class="s6">'/cgu'</span><span class="s2">, name: </span><span class="s6">'cgu'</span><span class="s2">)]</span>
+    <span class="s0">public function </span><span class="s2">cgu(): Response{</span>
+        <span class="s0">return </span><span class="s5">$this</span><span class="s2">-&gt;render(</span><span class="s6">&quot;pages/cgu.html.twig&quot;</span><span class="s2">);</span>
+    <span class="s2">}</span>
+<span class="s2">}</span>
+</pre>
+</body>
+</html>

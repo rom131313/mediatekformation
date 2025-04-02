@@ -9,16 +9,33 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * Contrôleur d'administration des catégories.
+ *
+ * Permet la gestion (CRUD) des catégories depuis le back-office.
+ */
 #[Route('/admin/categories', name: 'admin_categories_')]
 class AdminCategorieController extends AbstractController
 {
+    /**
+     *  Injection du repository.
+     * @var CategorieRepository
+     */
     private CategorieRepository $categorieRepository;
 
+    /**
+     *  Injection du repository.
+     * @param CategorieRepository $categorieRepository
+     */
     public function __construct(CategorieRepository $categorieRepository)
     {
         $this->categorieRepository = $categorieRepository;
     }
 
+    /**
+     *  Affiche la liste de toutes les catégories.
+     * @return Response
+     */
     #[Route('/', name: 'index')]
     public function index(): Response
     {
@@ -28,6 +45,12 @@ class AdminCategorieController extends AbstractController
         ]);
     }
 
+    /**
+     *  Permet d'ajouter une nouvelle catégorie.
+     * @param Request $request
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/add', name: 'add', methods: ['POST'])]
     public function add(Request $request, EntityManagerInterface $entityManager): Response
     {
@@ -53,6 +76,12 @@ class AdminCategorieController extends AbstractController
         return $this->redirectToRoute('admin_categories_index');
     }
 
+    /**
+     *  Supprime une catégorie si elle n'est pas liée à une formation.
+     * @param Categorie $categorie
+     * @param EntityManagerInterface $entityManager
+     * @return Response
+     */
     #[Route('/delete/{id}', name: 'delete')]
     public function delete(Categorie $categorie, EntityManagerInterface $entityManager): Response
     {
